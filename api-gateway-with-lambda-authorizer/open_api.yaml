@@ -1,0 +1,38 @@
+openapi: 3.0.3
+
+info:
+  title: Demo
+  description: Spec de l'API définissant les endpoints exposés par l'API Gateway.
+  version: 0.0.1
+
+paths:
+  /lambda-authorizer-endpoint:
+    get:
+      operationId: lambda-authorizer-endpoint
+      description: Exposition d'une lambda avec un accès sécurisée par validation de lambda authorizer.
+      x-amazon-apigateway-integration:
+        uri: "${lambda_hello_world_invoke_arn}"
+        httpMethod: "POST"
+        type: "aws"
+        responses:
+          default:
+            statusCode : "200"
+      security:
+        - lambda-authorizer : []
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    lambda-authorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        authorizerUri: "${lambda_authorizer_invoke_arn}"
+
+        
+        
+        authorizerResultTtlInSeconds: 300
+        type: token
